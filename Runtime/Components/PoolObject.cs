@@ -1,21 +1,14 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace BP.PoolIO
 {
-    public enum PoolObjectMode
+    public class PoolObject : MonoBehaviour, IPoolable
     {
-        Time,
-        Disable
-    }
-    public class PoolObject : MonoBehaviour
-    {
-        [SerializeField] private PoolObjectMode mode;
-        [SerializeField] private float time;
-
-        private float timer;
-        private void Update()
+        [SerializeField] private UnityEvent Reused;
+        public void OnReuse()
         {
-
+            Reused?.Invoke();
         }
     }
 }

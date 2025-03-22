@@ -25,10 +25,10 @@ namespace BP.PoolIO
             prefab = descriptor.Prefab;
             reuseObjects = descriptor.ReuseObjects;
             initSize = descriptor.InitSize;
+            dontDestroyOnLoad = descriptor.IsPersistant;
         }
 
-        private void Start() => Init();
-        public override void Init()
+        private void Start()
         {
             if (dontDestroyOnLoad)
             {
@@ -41,28 +41,38 @@ namespace BP.PoolIO
                 availableQueue.Enqueue(item);
             }
         }
+
         public override GameObject Get()
         {
             GameObject item;
             if (availableQueue.Count > 0)
             {
                 item = availableQueue.Dequeue();
-                usedList.AddFirst(item);
             }
             else if (reuseObjects && usedList.Count > 0)
             {
                 item = usedList.Last.Value;
                 usedList.RemoveLast();
-                usedList.AddFirst(item);
+                PrepareForReuse(item);
             }
             else
             {
                 item = CreatePooledObject();
-                usedList.AddFirst(item);
             }
 
+            usedList.AddFirst(item);
             return item;
         }
+        private void PrepareForReuse(GameObject pooledObject)
+        {
+            if (pooledObject.TryGetComponent<IPoolable>(out var poolable))
+            {
+                poolable.OnReuse();
+            }
+
+            pooledObject.SetActive(false);
+        }
+
         private GameObject CreatePooledObject()
         {
             var go = Instantiate(prefab);
@@ -81,6 +91,15 @@ namespace BP.PoolIO
                 return true;
             }
             return false;
+        }
+
+        public override void MakePersistent()
+        {
+            if (!dontDestroyOnLoad)
+            {
+                dontDestroyOnLoad = true;
+                DontDestroyOnLoad(gameObject);
+            }
         }
     }
 }

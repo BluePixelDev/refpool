@@ -8,7 +8,7 @@ namespace BP.PoolIO
         private static PoolManager instance;
         public static PoolManager Instance => GetOrCreateInstance();
 
-        private readonly Dictionary<PoolResource, IPoolable> registeredPools = new();
+        private readonly Dictionary<PoolResource, IPool> registeredPools = new();
         private static PoolManager GetOrCreateInstance()
         {
             if (instance != null) return instance;
@@ -30,18 +30,18 @@ namespace BP.PoolIO
             DontDestroyOnLoad(gameObject);
         }
 
-        public void RegisterPool(PoolResource descriptor, IPoolable pool)
+        public void RegisterPool(PoolResource descriptor, IPool pool)
         {
             if (registeredPools.ContainsKey(descriptor)) return;
             registeredPools.Add(descriptor, pool);
         }
 
-        public bool TryGetPool(PoolResource descriptor, out IPoolable pool)
+        public bool TryGetPool(PoolResource descriptor, out IPool pool)
         {
             return registeredPools.TryGetValue(descriptor, out pool);
         }
 
-        public IPoolable GetPool(PoolResource descriptor)
+        public IPool GetPool(PoolResource descriptor)
         {
             return registeredPools.TryGetValue(descriptor, out var pool) ? pool : null;
         }

@@ -24,9 +24,6 @@ namespace BP.PoolIO
             return pg;
         }
 
-        public static bool IsNull(this object gameObject)
-        {
-            return gameObject == null || gameObject.Equals(null);
-        }
+        public static bool IsNull(this object gameObject) => gameObject == null || gameObject.Equals(null);
     }
 }

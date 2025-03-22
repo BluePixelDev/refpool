@@ -3,10 +3,14 @@ using UnityEngine;
 
 namespace BP.PoolIO
 {
+    /// <summary>
+    /// Represents a group of pools that can use different selection strategies to obtain pooled GameObjects.
+    /// </summary>
     public class PoolGroup : PoolComponent
     {
         [SerializeField] private PoolPickMode pickMode = PoolPickMode.Random;
         [SerializeField] private List<PoolComponent> pools = new();
+        [SerializeField] private bool isPersistent;
 
         private int seqIndex;
         private int backIndex;
@@ -39,6 +43,7 @@ namespace BP.PoolIO
         public void SetAsset(PoolGroupAsset poolGroupAsset)
         {
             pickMode = poolGroupAsset.PickMode;
+            isPersistent = poolGroupAsset.IsPersistent;
         }
 
         public void AddPool(PoolComponent pool)
@@ -51,6 +56,7 @@ namespace BP.PoolIO
                 return;
             }
 
+            if (isPersistent) pool.MakePersistent();
             pools.Add(pool);
         }
         public bool RemovePool(PoolComponent pool)
@@ -72,14 +78,6 @@ namespace BP.PoolIO
             return false;
         }
 
-        public override void Init()
-        {
-            foreach (var pool in pools)
-            {
-                if (pool == null) continue;
-                pool.Init();
-            }
-        }
         public override GameObject Get()
         {
             return pickMode switch
@@ -126,5 +124,13 @@ namespace BP.PoolIO
             return false;
         }
 
+
+        public override void MakePersistent()
+        {
+            foreach (var pool in pools)
+            {
+                pool.MakePersistent();
+            }
+        }
     }
 }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BP.PoolIO
+namespace BP.RefPool
 {
     /// <summary>
     /// A simple pool implementation.
@@ -10,26 +10,31 @@ namespace BP.PoolIO
     {
         [SerializeField] private GameObject prefab;
         [SerializeField] private int initSize;
+        [SerializeField] private int maxSize;
         [SerializeField] private bool reuseObjects;
         [SerializeField] private bool dontDestroyOnLoad;
 
         public GameObject Pooled { get => prefab; set => prefab = value; }
         public bool ReuseObjects { get => reuseObjects; set => reuseObjects = value; }
         public int InitSize { get => initSize; set => initSize = value; }
+        public int MaxSize { get => maxSize; set => maxSize = value; }
 
         private readonly Queue<GameObject> availableQueue = new();
         private readonly LinkedList<GameObject> usedList = new();
+        private bool isInitialized;
 
-        public void SetAsset(PoolAsset descriptor)
+        private void Start() => Initialize();
+        public void SetAsset(PoolAsset asset)
         {
-            prefab = descriptor.Prefab;
-            reuseObjects = descriptor.ReuseObjects;
-            initSize = descriptor.InitSize;
-            dontDestroyOnLoad = descriptor.IsPersistant;
+            prefab = asset.Prefab;
+            reuseObjects = asset.ReuseObjects;
+            initSize = asset.InitSize;
+            dontDestroyOnLoad = asset.IsPersistent;
         }
 
-        private void Start()
+        public override void Initialize()
         {
+            if (isInitialized) return;
             if (dontDestroyOnLoad)
             {
                 DontDestroyOnLoad(gameObject);
@@ -40,14 +45,19 @@ namespace BP.PoolIO
                 var item = CreatePooledObject();
                 availableQueue.Enqueue(item);
             }
+            isInitialized = true;
         }
-
         public override GameObject Get()
         {
             GameObject item;
             if (availableQueue.Count > 0)
             {
                 item = availableQueue.Dequeue();
+            }
+            else if (usedList.Count < maxSize)
+            {
+                item = CreatePooledObject();
+                usedList.AddFirst(item);
             }
             else if (reuseObjects && usedList.Count > 0)
             {
@@ -63,25 +73,6 @@ namespace BP.PoolIO
             usedList.AddFirst(item);
             return item;
         }
-        private void PrepareForReuse(GameObject pooledObject)
-        {
-            if (pooledObject.TryGetComponent<IPoolable>(out var poolable))
-            {
-                poolable.OnReuse();
-            }
-
-            pooledObject.SetActive(false);
-        }
-
-        private GameObject CreatePooledObject()
-        {
-            var go = Instantiate(prefab);
-            go.name = $"Pooled_{prefab.name}";
-            go.AddComponent<PoolObject>();
-            go.SetActive(false);
-            go.transform.SetParent(transform);
-            return go;
-        }
         public override bool Release(GameObject gameObject)
         {
             if (usedList.Contains(gameObject))
@@ -93,6 +84,24 @@ namespace BP.PoolIO
             return false;
         }
 
+        private void PrepareForReuse(GameObject pooledObject)
+        {
+            if (pooledObject.TryGetComponent<IPoolable>(out var poolable))
+            {
+                poolable.OnReuse();
+            }
+
+            pooledObject.SetActive(false);
+        }
+        private GameObject CreatePooledObject()
+        {
+            var go = Instantiate(prefab);
+            go.name = $"Pooled_{prefab.name}";
+            go.AddComponent<PoolObject>();
+            go.SetActive(false);
+            go.transform.SetParent(transform);
+            return go;
+        }
         public override void MakePersistent()
         {
             if (!dontDestroyOnLoad)

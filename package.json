@@ -1,0 +1,23 @@
+{
+    "name": "com.bluepixel.refpool",
+    "version": "1.0.0",
+    "displayName": "RefPool",
+    "description": "A lightweight pooling system using ScriptableObjects as inter-scene references for clean, shared object pooling and automatic lifecycle management.",
+    "unity": "6000.0",
+    "author": {
+      "name": "Bluepixel",
+      "email": "bluepixeldev@gmail.com",
+      "url": "https://bluepixeldev.github.io"
+    },
+    "keywords": [
+      "pooling",
+      "scriptableobject",
+      "object pool",
+      "unity",
+      "refpool",
+      "lifecycle",
+      "memory"
+    ],
+    "dependencies": {}
+  }
+  

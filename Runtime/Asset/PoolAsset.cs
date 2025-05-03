@@ -1,11 +1,11 @@
 using UnityEngine;
 
-namespace BP.PoolIO
+namespace BP.RefPool
 {
     /// <summary>
     /// ScriptableObject asset representing a pool for GameObjects.
     /// </summary>
-    [CreateAssetMenu(fileName = "Pool", menuName = "Pooling/Pool")]
+    [CreateAssetMenu(fileName = "Pool", menuName = "RefPool/Pool")]
     public class PoolAsset : PoolResource
     {
         [SerializeField] private string poolName;
@@ -13,7 +13,7 @@ namespace BP.PoolIO
         [SerializeField] private int initSize;
         [SerializeField] private int maxSize;
         [SerializeField] private bool reuseObjects;
-        [SerializeField] private bool isPersistant;
+        [SerializeField] private bool isPersistent;
 
         /// <summary>
         /// Gets the name of the pool.
@@ -42,21 +42,19 @@ namespace BP.PoolIO
         /// <summary>
         /// Gets a value indicating whether the pool should persist across scene loads.
         /// </summary>
-        public bool IsPersistant => isPersistant;
+        public bool IsPersistent => isPersistent;
 
         private IPool poolRef;
 
-        /// <summary>
-        /// Retrieves a GameObject from the pool.
-        /// </summary>
-        /// <returns>The pooled GameObject.</returns>
+        public override void Initialize()
+        {
+            if (PoolUtils.IsNull(poolRef))
+            {
+                poolRef = PoolUtils.CreatePool(this);
+                poolRef.Initialize();
+            }
+        }
         public override GameObject Get() => GetPool().Get();
-
-        /// <summary>
-        /// Releases a GameObject back into the pool.
-        /// </summary>
-        /// <param name="gameObject">The GameObject to release.</param>
-        /// <returns>True if the object was successfully released; otherwise, false.</returns>
         public override bool Release(GameObject gameObject) => poolRef?.Release(gameObject) ?? false;
 
         /// <summary>
@@ -65,11 +63,7 @@ namespace BP.PoolIO
         /// <returns>The pool instance implementing IPoolable.</returns>
         private IPool GetPool()
         {
-            if (PoolUtils.IsNull(poolRef))
-            {
-                poolRef = PoolUtils.CreatePool(this);
-            }
-
+            Initialize();
             return poolRef;
         }
     }

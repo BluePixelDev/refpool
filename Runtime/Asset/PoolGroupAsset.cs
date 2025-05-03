@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BP.PoolIO
+namespace BP.RefPool
 {
     /// <summary>
     /// Enumeration for selecting the pooling strategy.
@@ -15,7 +15,7 @@ namespace BP.PoolIO
     /// <summary>
     /// ScriptableObject asset representing a group of pools.
     /// </summary>
-    [CreateAssetMenu(fileName = "PoolGroup", menuName = "Pooling/PoolGroup")]
+    [CreateAssetMenu(fileName = "PoolGroup", menuName = "RefPool/Pool Group")]
     public class PoolGroupAsset : PoolResource
     {
         [SerializeField] private string groupName;
@@ -45,6 +45,14 @@ namespace BP.PoolIO
 
         private PoolGroup groupRef;
 
+        public override void Initialize()
+        {
+            if (PoolUtils.IsNull(groupRef))
+            {
+                groupRef = PoolUtils.CreatePoolGroup(this);
+                groupRef.Initialize();
+            }
+        }
         public override GameObject Get() => GetPoolGroup().Get();
         public override bool Release(GameObject gameObject)
         {
@@ -53,10 +61,7 @@ namespace BP.PoolIO
         }
         private PoolGroup GetPoolGroup()
         {
-            if (PoolUtils.IsNull(groupRef))
-            {
-                groupRef = PoolUtils.CreatePoolGroup(this);
-            }
+            Initialize();
             return groupRef;
         }
     }

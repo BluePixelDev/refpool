@@ -1,12 +1,16 @@
 using UnityEngine;
 
-namespace BP.PoolIO
+namespace BP.RefPool
 {
     public static class PoolUtils
     {
+        const string POOL_NAME_PREFIX = "[POOL]_";
+        const string POOLGROUP_NAME_PREFIX = "[PGROUP]_";
+
         public static Pool CreatePool(PoolAsset poolAsset)
         {
-            var gameObject = new GameObject(poolAsset.PoolName ?? "Unnamed Pool");
+            var poolName = FormatName(poolAsset.PoolName, POOL_NAME_PREFIX);
+            var gameObject = new GameObject(poolName);
             var pool = gameObject.AddComponent<Pool>();
             pool.SetAsset(poolAsset);
             return pool;
@@ -14,7 +18,8 @@ namespace BP.PoolIO
 
         public static PoolGroup CreatePoolGroup(PoolGroupAsset groupAsset)
         {
-            var gameObject = new GameObject(groupAsset.GroupName ?? "Unnamed Group");
+            var groupName = FormatName(groupAsset.GroupName, POOLGROUP_NAME_PREFIX);
+            var gameObject = new GameObject(groupName);
             var pg = gameObject.AddComponent<PoolGroup>();
             foreach (var pool in groupAsset.Pools)
             {
@@ -24,6 +29,7 @@ namespace BP.PoolIO
             return pg;
         }
 
+        private static string FormatName(string name, string prefix) => string.IsNullOrEmpty(name) ? $"{prefix}Unnamed" : $"{prefix}{name}";
         public static bool IsNull(this object gameObject) => gameObject == null || gameObject.Equals(null);
     }
 }

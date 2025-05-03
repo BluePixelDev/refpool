@@ -1,4 +1,4 @@
-namespace BP.PoolIO
+namespace BP.RefPool
 {
     public interface IPoolable
     {

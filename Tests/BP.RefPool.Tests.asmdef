@@ -1,10 +1,10 @@
 {
-    "name": "BP.PoolIO.Tests",
-    "rootNamespace": "BP.PoolIO.Tests",
+    "name": "BP.RefPool.Tests",
+    "rootNamespace": "BP.RefPool.Tests",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "BP.PoolIO"
+        "BP.RefPool"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

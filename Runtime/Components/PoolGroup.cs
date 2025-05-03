@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BP.PoolIO
+namespace BP.RefPool
 {
     /// <summary>
     /// Represents a group of pools that can use different selection strategies to obtain pooled GameObjects.
@@ -15,6 +15,7 @@ namespace BP.PoolIO
         private int seqIndex;
         private int backIndex;
         private int backDir = 1;
+        private bool isInitialized;
 
         private void OnValidate()
         {
@@ -78,6 +79,16 @@ namespace BP.PoolIO
             return false;
         }
 
+        public override void Initialize()
+        {
+            if (isInitialized) return;
+            foreach (var pool in pools)
+            {
+                if (pool == null) continue;
+                pool.Initialize();
+            }
+            isInitialized = true;
+        }
         public override GameObject Get()
         {
             return pickMode switch
@@ -87,6 +98,18 @@ namespace BP.PoolIO
                 PoolPickMode.Back2Back => GetBack2Back(),
                 _ => GetRandom()
             };
+        }
+        public override bool Release(GameObject gameObject)
+        {
+            foreach (var pool in pools)
+            {
+                if (pool.Release(gameObject))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private GameObject GetRandom()
@@ -110,21 +133,6 @@ namespace BP.PoolIO
             }
             return pool.Get();
         }
-
-        public override bool Release(GameObject gameObject)
-        {
-            foreach (var pool in pools)
-            {
-                if (pool.Release(gameObject))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-
         public override void MakePersistent()
         {
             foreach (var pool in pools)

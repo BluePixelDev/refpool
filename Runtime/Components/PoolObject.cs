@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace BP.PoolIO
+namespace BP.RefPool
 {
     public class PoolObject : MonoBehaviour, IPoolable
     {

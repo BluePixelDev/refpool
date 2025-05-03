@@ -1,8 +1,12 @@
 {
-    "name": "BP.PoolIO",
-    "rootNamespace": "BP.PoolIO",
-    "references": [],
-    "includePlatforms": [],
+    "name": "BP.RefPool.Editor",
+    "rootNamespace": "BP.RefPool.Editor",
+    "references": [
+        "GUID:5df53463e12a5c24183fa4fbd6737925"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

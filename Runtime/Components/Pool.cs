@@ -4,19 +4,34 @@ using UnityEngine;
 namespace BP.RefPool
 {
     /// <summary>
-    /// A simple pool implementation.
+    /// A basic GameObject pool that supports initialization, reuse, and optional persistence across scenes.
     /// </summary>
     public class Pool : PoolComponent
     {
         [SerializeField] private GameObject prefab;
-        [SerializeField] private int initSize;
-        [SerializeField] private int maxSize;
-        [SerializeField] private bool reuseObjects;
-        [SerializeField] private bool dontDestroyOnLoad;
+        [SerializeField] private int initSize = 10;
+        [SerializeField] private int maxSize = 50;
+        [SerializeField] private bool reuseObjects = false;
+        [SerializeField] private bool dontDestroyOnLoad = false;
 
+        /// <summary>
+        /// The prefab used for pooled instances.
+        /// </summary>
         public GameObject Pooled { get => prefab; set => prefab = value; }
+
+        /// <summary>
+        /// If true, old objects will be reused when the pool exceeds its maximum size.
+        /// </summary>
         public bool ReuseObjects { get => reuseObjects; set => reuseObjects = value; }
+
+        /// <summary>
+        /// Initial number of objects to populate in the pool.
+        /// </summary>
         public int InitSize { get => initSize; set => initSize = value; }
+
+        /// <summary>
+        /// Maximum number of objects allowed in the pool.
+        /// </summary>
         public int MaxSize { get => maxSize; set => maxSize = value; }
 
         private readonly Queue<GameObject> availableQueue = new();
@@ -24,32 +39,45 @@ namespace BP.RefPool
         private bool isInitialized;
 
         private void Start() => Initialize();
+
+        /// <summary>
+        /// Configures this pool using the data from a <see cref="PoolAsset"/>.
+        /// </summary>
         public void SetAsset(PoolAsset asset)
         {
             prefab = asset.Prefab;
-            reuseObjects = asset.ReuseObjects;
             initSize = asset.InitSize;
+            maxSize = asset.MaxSize;
+            reuseObjects = asset.ReuseObjects;
             dontDestroyOnLoad = asset.IsPersistent;
         }
 
+        /// <summary>
+        /// Initializes the pool by instantiating the initial objects.
+        /// </summary>
         public override void Initialize()
         {
             if (isInitialized) return;
-            if (dontDestroyOnLoad)
-            {
-                DontDestroyOnLoad(gameObject);
-            }
 
-            for (var i = 0; i < initSize; i++)
+            if (dontDestroyOnLoad)
+                DontDestroyOnLoad(gameObject);
+
+            for (int i = 0; i < initSize; i++)
             {
                 var item = CreatePooledObject();
                 availableQueue.Enqueue(item);
             }
+
             isInitialized = true;
         }
+
+        /// <summary>
+        /// Retrieves a GameObject from the pool.
+        /// </summary>
         public override GameObject Get()
         {
             GameObject item;
+
             if (availableQueue.Count > 0)
             {
                 item = availableQueue.Dequeue();
@@ -57,7 +85,6 @@ namespace BP.RefPool
             else if (usedList.Count < maxSize)
             {
                 item = CreatePooledObject();
-                usedList.AddFirst(item);
             }
             else if (reuseObjects && usedList.Count > 0)
             {
@@ -73,6 +100,10 @@ namespace BP.RefPool
             usedList.AddFirst(item);
             return item;
         }
+
+        /// <summary>
+        /// Returns a GameObject to the pool, if it was previously retrieved.
+        /// </summary>
         public override bool Release(GameObject gameObject)
         {
             if (usedList.Contains(gameObject))
@@ -84,6 +115,21 @@ namespace BP.RefPool
             return false;
         }
 
+        /// <summary>
+        /// Ensures this pool persists across scene loads.
+        /// </summary>
+        public override void MakePersistent()
+        {
+            if (!dontDestroyOnLoad)
+            {
+                dontDestroyOnLoad = true;
+                DontDestroyOnLoad(gameObject);
+            }
+        }
+
+        /// <summary>
+        /// Prepares a reused object by resetting it and disabling it.
+        /// </summary>
         private void PrepareForReuse(GameObject pooledObject)
         {
             if (pooledObject.TryGetComponent<IPoolable>(out var poolable))
@@ -93,6 +139,10 @@ namespace BP.RefPool
 
             pooledObject.SetActive(false);
         }
+
+        /// <summary>
+        /// Instantiates and sets up a new pooled object.
+        /// </summary>
         private GameObject CreatePooledObject()
         {
             var go = Instantiate(prefab);
@@ -101,14 +151,6 @@ namespace BP.RefPool
             go.SetActive(false);
             go.transform.SetParent(transform);
             return go;
-        }
-        public override void MakePersistent()
-        {
-            if (!dontDestroyOnLoad)
-            {
-                dontDestroyOnLoad = true;
-                DontDestroyOnLoad(gameObject);
-            }
         }
     }
 }

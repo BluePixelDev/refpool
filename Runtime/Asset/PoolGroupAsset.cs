@@ -3,62 +3,67 @@ using UnityEngine;
 namespace BP.RefPool
 {
     /// <summary>
-    /// Enumeration for selecting the pooling strategy.
-    /// </summary>
-    public enum PoolPickMode
-    {
-        Random,
-        Sequential,
-        Back2Back
-    }
-
-    /// <summary>
-    /// ScriptableObject asset representing a group of pools.
+    /// ScriptableObject representing a referenceable group of pool assets.
+    /// Allows configuring pooled objects and pick strategy via asset.
     /// </summary>
     [CreateAssetMenu(fileName = "PoolGroup", menuName = "RefPool/Pool Group")]
     public class PoolGroupAsset : PoolResource
     {
-        [SerializeField] private string groupName;
+        [SerializeField] private string groupName = "New Group";
         [SerializeField] private PoolPickMode pickMode = PoolPickMode.Random;
         [SerializeField] private PoolAsset[] pools;
-        [SerializeField] private bool isPersistent;
+        [SerializeField] private bool isPersistent = false;
+
+        private PoolGroup groupRef;
 
         /// <summary>
-        /// Gets the name of the pool group.
+        /// Optional display name for the pool group.
         /// </summary>
         public string GroupName => groupName;
 
         /// <summary>
-        /// Gets the picking mode for selecting pools.
+        /// Strategy used to pick which pool to pull from.
         /// </summary>
         public PoolPickMode PickMode => pickMode;
 
         /// <summary>
-        /// Gets the array of pool assets in the group.
+        /// Array of pool assets that make up this group.
         /// </summary>
         public PoolAsset[] Pools => pools;
 
         /// <summary>
-        /// Gets a value indicating whether the pool group should persist across scene loads.
+        /// Whether this group should persist across scene loads.
         /// </summary>
         public bool IsPersistent => isPersistent;
 
-        private PoolGroup groupRef;
-
+        /// <summary>
+        /// Initializes the internal PoolGroup instance.
+        /// </summary>
         public override void Initialize()
         {
-            if (PoolUtils.IsNull(groupRef))
+            if (groupRef == null)
             {
                 groupRef = PoolUtils.CreatePoolGroup(this);
                 groupRef.Initialize();
             }
         }
+
+        /// <summary>
+        /// Gets a pooled object using the group strategy.
+        /// </summary>
         public override GameObject Get() => GetPoolGroup().Get();
+
+        /// <summary>
+        /// Attempts to release the GameObject to one of the internal pools.
+        /// </summary>
         public override bool Release(GameObject gameObject)
         {
-            if (PoolUtils.IsNull(groupRef)) return false;
-            return groupRef.Release(gameObject);
+            return groupRef != null && groupRef.Release(gameObject);
         }
+
+        /// <summary>
+        /// Ensures the group is initialized and returns the internal reference.
+        /// </summary>
         private PoolGroup GetPoolGroup()
         {
             Initialize();

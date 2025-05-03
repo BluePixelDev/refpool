@@ -3,49 +3,62 @@ using UnityEngine;
 namespace BP.RefPool
 {
     /// <summary>
-    /// ScriptableObject asset representing a pool for GameObjects.
+    /// ScriptableObject representing a pooled GameObject resource.
+    /// This asset acts as a referenceable and configurable container for a shared object pool.
     /// </summary>
     [CreateAssetMenu(fileName = "Pool", menuName = "RefPool/Pool")]
     public class PoolAsset : PoolResource
     {
         [SerializeField] private string poolName;
         [SerializeField] private GameObject prefab;
-        [SerializeField] private int initSize;
-        [SerializeField] private int maxSize;
-        [SerializeField] private bool reuseObjects;
-        [SerializeField] private bool isPersistent;
+        [SerializeField] private int initSize = 10;
+        [SerializeField] private int maxSize = 100;
+        [SerializeField] private bool reuseObjects = true;
+        [SerializeField] private bool isPersistent = false;
+
+        private IPool poolRef;
 
         /// <summary>
-        /// Gets the name of the pool.
-        /// </summary>
-        public string PoolName => poolName;
+        /// Display name of the pool. Defaults to the prefab name if unset.
+        /// </summary>O
+        public string PoolName => string.IsNullOrEmpty(poolName) && prefab ? prefab.name : poolName;
 
         /// <summary>
-        /// Gets the prefab associated with this pool.
+        /// The prefab that will be pooled.
         /// </summary>
         public GameObject Prefab => prefab;
 
         /// <summary>
-        /// Gets the initial size of the pool.
+        /// Number of instances to preallocate at initialization.
         /// </summary>
         public int InitSize => initSize;
+
         /// <summary>
-        /// Gets the maximum size of the pool.
+        /// Maximum number of instances allowed in the pool.
         /// </summary>
         public int MaxSize => maxSize;
 
         /// <summary>
-        /// Gets a value indicating whether objects in the pool should be reused.
+        /// Whether the pool reuses released instances when max size is reached.
         /// </summary>
         public bool ReuseObjects => reuseObjects;
 
         /// <summary>
-        /// Gets a value indicating whether the pool should persist across scene loads.
+        /// Whether the pool persists across scene changes.
         /// </summary>
         public bool IsPersistent => isPersistent;
 
-        private IPool poolRef;
+        private void OnValidate()
+        {
+            if (string.IsNullOrEmpty(poolName) && prefab != null)
+            {
+                poolName = prefab.name;
+            }
+        }
 
+        /// <summary>
+        /// Initializes the internal pool if it hasn't been created yet.
+        /// </summary>
         public override void Initialize()
         {
             if (PoolUtils.IsNull(poolRef))
@@ -54,13 +67,20 @@ namespace BP.RefPool
                 poolRef.Initialize();
             }
         }
+
+        /// <summary>
+        /// Gets an instance from the pool, creating the pool if necessary.
+        /// </summary>
         public override GameObject Get() => GetPool().Get();
+
+        /// <summary>
+        /// Returns an instance to the pool.
+        /// </summary>
         public override bool Release(GameObject gameObject) => poolRef?.Release(gameObject) ?? false;
 
         /// <summary>
-        /// Gets the pool instance, creating it if necessary.
+        /// Ensures the pool is initialized and returns the internal pool reference.
         /// </summary>
-        /// <returns>The pool instance implementing IPoolable.</returns>
         private IPool GetPool()
         {
             Initialize();

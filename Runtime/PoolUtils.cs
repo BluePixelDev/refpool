@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace BP.RefPool
 {
-    public static class PoolUtils
+    internal static class PoolUtils
     {
         const string POOL_NAME_PREFIX = "[POOL]_";
         const string POOLGROUP_NAME_PREFIX = "[PGROUP]_";

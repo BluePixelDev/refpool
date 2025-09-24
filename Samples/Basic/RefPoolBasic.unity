@@ -248,7 +248,6 @@ MonoBehaviour:
   m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
-  m_Version: 2
   m_TaaSettings:
     m_Quality: 3
     m_FrameInfluence: 0.1
@@ -256,6 +255,7 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!1 &2108661077
 GameObject:
   m_ObjectHideFlags: 0
@@ -298,10 +298,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 2108661077}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ae06038705f9a74b8d8cfc526406bfe, type: 3}
+  m_Script: {fileID: 11500000, guid: c8e2777b5eb5a134d842e733f0ceed4c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  poolResource: {fileID: 11400000, guid: 3ebe9444838fd694491f0025d51104cf, type: 2}
+  m_EditorClassIdentifier: BP.RefPool::BP.RefPool.RefSpawner
+  refResource: {fileID: 11400000, guid: 3ebe9444838fd694491f0025d51104cf, type: 2}
+  initializeOnAwake: 1
+  autoSpawn: 1
+  spawnInterval: 0
+  spawnCountPerInterval: 1000
+  OnSpawn:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &2108661080
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -311,16 +318,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 2108661077}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0bc765cbcb42293439f3148243161b4f, type: 3}
+  m_Script: {fileID: 11500000, guid: 83fb8d6089038aa4894d3f78ca10b6ec, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  poolResource: {fileID: 11400000, guid: 3ebe9444838fd694491f0025d51104cf, type: 2}
-  initializeOnAwake: 0
-  autoSpawn: 1
-  spawnInterval: 1
-  spawnCountPerInterval: 1
+  m_EditorClassIdentifier: BP.RefPool::BP.RefPool.RefPlacer
+  placementMode: 1
   positionOverride: {fileID: 0}
-  randomRadius: 4
+  randomPlacementRadius: 10
+  randomYRotation: 0
+  fixedRotation: {x: 0, y: 0, z: 0, w: 1}
+  useFixedRotation: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

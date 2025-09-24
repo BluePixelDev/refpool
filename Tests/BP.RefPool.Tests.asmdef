@@ -1,6 +1,6 @@
 {
     "name": "BP.RefPool.Tests",
-    "rootNamespace": "BP.RefPool.Tests",
+    "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",

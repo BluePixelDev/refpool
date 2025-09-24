@@ -1,0 +1,21 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/RefPool/Editor/RefPooler/USS_RefPooler.uss?fileID=7433441132597879392&amp;guid=145e3bab8eac20648b1ccf96eb21fddd&amp;type=3#USS_RefPooler" />
+    <uie:ObjectField label="Prefab" type="UnityEngine.GameObject, UnityEngine.CoreModule" binding-path="prefab" />
+    <ui:IntegerField label="Max Size" value="0" binding-path="maxSize" />
+    <ui:SliderInt label="Init Size" value="42" high-value="10" fill="false" show-input-field="true" binding-path="initSize" name="init-size" />
+    <ui:Toggle label="Reuse Objects" binding-path="reuseObjects" />
+    <ui:Toggle label="Persistent" binding-path="isPersistent" />
+    <ui:VisualElement name="runtime-stats" style="flex-grow: 1;">
+        <ui:GroupBox>
+            <ui:Label text="Runtime Stats" style="-unity-font-style: bold;" />
+            <ui:VisualElement style="flex-grow: 0; flex-direction: row;">
+                <ui:Label text="Usage" style="width: 60px;" />
+                <ui:ProgressBar value="0.5" title="10/100" name="usage-progress" high-value="1" style="flex-grow: 1;" />
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 0; flex-direction: row;">
+                <ui:Label text="Capacity" style="width: 60px;" />
+                <ui:ProgressBar value="0.5" title="10/100" name="capacity-progress" high-value="1" style="flex-grow: 1;" />
+            </ui:VisualElement>
+        </ui:GroupBox>
+    </ui:VisualElement>
+</ui:UXML>

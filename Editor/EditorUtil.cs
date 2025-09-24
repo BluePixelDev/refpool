@@ -10,20 +10,20 @@ namespace BP.RefPool.Editor
         public static void CreatePool(MenuCommand menuCommand)
         {
             GameObject go = new("Pool");
-            go.AddComponent<Pool>();
+            go.AddComponent<RefPooler>();
             EditorCreeate(menuCommand, go);
         }
 
         [MenuItem("GameObject/RefPool/Group", false, 10)]
         public static void CreateGroup(MenuCommand menuCommand)
         {
-            GameObject root = new("Group", typeof(PoolGroup));
-            var rootGroup = root.GetComponent<PoolGroup>();
+            GameObject root = new("Group", typeof(RefPoolerGroup));
+            var rootGroup = root.GetComponent<RefPoolerGroup>();
             for (int i = 0; i < 3; i++)
             {
-                GameObject child = new($"Pool #{i + 1}", typeof(Pool));
+                GameObject child = new($"Pool #{i + 1}", typeof(RefPooler));
                 child.transform.SetParent(root.transform);
-                rootGroup.AddPool(child.GetComponent<Pool>());
+                rootGroup.AddPool(child.GetComponent<RefPooler>());
             }
             EditorCreeate(menuCommand, root);
         }
@@ -32,7 +32,7 @@ namespace BP.RefPool.Editor
         [MenuItem("GameObject/RefPool/Spawner", false, 10)]
         public static void CreateSpawner(MenuCommand menuCommand)
         {
-            GameObject root = new("Spawner", typeof(PoolSpawner));
+            GameObject root = new("Spawner", typeof(RefSpawner));
             EditorCreeate(menuCommand, root);
         }
 

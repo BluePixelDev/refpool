@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbccf788c26e44044818d50075dd0821, type: 3}
   m_Name: BasicExamplePool
   m_EditorClassIdentifier: 
-  poolName: Cube
+  displayName: New Pool
   prefab: {fileID: 7288356910664534742, guid: d56a562818311c94c929d9bb4330a4ea, type: 3}
-  initSize: 0
-  maxSize: 0
-  reuseObjects: 0
+  initSize: 1000
+  maxSize: 1000
+  reuseObjects: 1
   isPersistent: 0

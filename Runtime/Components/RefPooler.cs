@@ -17,13 +17,13 @@ namespace BP.RefPool
 
         private readonly Queue<RefItem> availibleItems = new();
         private readonly LinkedList<RefItem> usedItems = new();
-        private bool isInitialized;
+        private bool isPrepared;
 
         public int Count => availibleItems.Count + usedItems.Count;
         public int UsedCount => usedItems.Count;
         public int AvailibleCount => availibleItems.Count;
 
-        private void Start() => Initialize();
+        private void Start() => Prepare();
 
         private void OnValidate()
         {
@@ -31,9 +31,9 @@ namespace BP.RefPool
             initSize = Mathf.Clamp(initSize, 0, maxSize);
         }
 
-        public override void Initialize()
+        public override void Prepare()
         {
-            if (isInitialized) return;
+            if (isPrepared) return;
             if (prefab == null) return;
 
             initSize = Mathf.Clamp(initSize, 0, maxSize);
@@ -43,7 +43,7 @@ namespace BP.RefPool
                 item.SetActive(false);
                 availibleItems.Enqueue(item);
             }
-            isInitialized = true;
+            isPrepared = true;
         }
 
         public override RefItem Get()
@@ -77,6 +77,7 @@ namespace BP.RefPool
 
             return null;
         }
+
         public bool Release(RefItem item)
         {
             if (item == null) return false;

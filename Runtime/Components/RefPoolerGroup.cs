@@ -31,13 +31,13 @@ namespace BP.RefPool
             }
         }
 
-        public override void Initialize()
+        public override void Prepare()
         {
             if (isInitialized) return;
             foreach (var pool in pools)
             {
                 if (pool == null) continue;
-                pool.Initialize();
+                pool.Prepare();
             }
             isInitialized = true;
         }

@@ -13,15 +13,8 @@ namespace BP.RefPool
         [SerializeField] private int maxSize = 100;
         [SerializeField] private bool reuseObjects = true;
 
+        // Runtime Reference
         [HideInInspector] private RefComponent poolRef;
-
-        private void OnValidate()
-        {
-            if (string.IsNullOrEmpty(displayName) && prefab != null)
-            {
-                displayName = prefab.name;
-            }
-        }
 
         public override RefItem Get()
         {

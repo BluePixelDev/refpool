@@ -19,6 +19,7 @@ namespace BP.RefPool
         [SerializeField] private PoolPickMode pickMode = PoolPickMode.Random;
         [SerializeField] private List<RefResource> pools = new();
 
+        // Runtime Reference
         [HideInInspector] private RefComponent groupRef;
 
         private void OnValidate()

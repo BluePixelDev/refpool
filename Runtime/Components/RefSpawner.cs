@@ -6,14 +6,12 @@ namespace BP.RefPool
 {
     public class RefSpawner : MonoBehaviour
     {
-        [Header("Pool")]
         [SerializeField] private RefResource refResource;
-        [SerializeField] private bool initializeOnAwake;
+        [SerializeField] private bool initOnAwake;
 
-        [Header("Spawning")]
         [SerializeField] private bool autoSpawn = false;
         [SerializeField, Min(0)] private float spawnInterval = 1f;
-        [SerializeField, Min(0)] private int spawnCountPerInterval = 1;
+        [SerializeField, Min(0)] private int spawnCount = 1;
 
         private float spawnTimer;
 
@@ -23,12 +21,12 @@ namespace BP.RefPool
         private void OnValidate()
         {
             spawnInterval = RefUtils.ClampMin(spawnInterval, 0);
-            spawnCountPerInterval = RefUtils.ClampMin(spawnCountPerInterval, 0);
+            spawnCount = RefUtils.ClampMin(spawnCount, 0);
         }
 
         private void Awake()
         {
-            if (initializeOnAwake)
+            if (initOnAwake)
             {
                 if (refResource == null)
                 {
@@ -36,7 +34,7 @@ namespace BP.RefPool
                     return;
                 }
 
-                refResource.Initialize();
+                refResource.Prepare();
             }
         }
 
@@ -49,7 +47,7 @@ namespace BP.RefPool
             if (spawnTimer >= spawnInterval)
             {
                 spawnTimer = 0f;
-                for (int i = 0; i < spawnCountPerInterval; i++)
+                for (int i = 0; i < spawnCount; i++)
                 {
                     Spawn();
                 }
@@ -63,7 +61,6 @@ namespace BP.RefPool
             var refItem = refResource.Get();
             if (!refItem) return;
 
-            refItem.SetActive(true);
             refItem.transform.SetPositionAndRotation(transform.position, transform.rotation);
 
             OnSpawn?.Invoke(refItem);

@@ -11,18 +11,18 @@ namespace BP.RefPool
         private RefItem refItem;
         private float lifetimeTimer;
 
-        private void OnEnable()
+        private void Awake()
         {
             refItem = GetComponent<RefItem>();
 
             if (!refItem) return;
-            refItem.Reset += PoolItem_Reset;
+            refItem.Used += PoolItem_Reset;
         }
 
         private void OnDestroy()
         {
             if (!refItem) return;
-            refItem.Reset -= PoolItem_Reset;
+            refItem.Used -= PoolItem_Reset;
         }
 
         private void PoolItem_Reset()
@@ -37,7 +37,7 @@ namespace BP.RefPool
             lifetimeTimer -= Time.deltaTime;
             if (lifetimeTimer <= 0)
             {
-                refItem.OwnerPool.Release(refItem);
+                refItem.Release();
             }
         }
     }

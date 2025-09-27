@@ -3,26 +3,25 @@ using UnityEngine;
 
 namespace BP.RefPool
 {
-    public class RefPooler : RefComponent, IResourceApplier<PoolAsset>
+    public class RefPooler : RefComponent, IReleasable
     {
         [SerializeField] private GameObject prefab;
         [SerializeField, Min(0)] private int maxSize = 50;
         [SerializeField, Min(0)] private int initSize = 10;
         [SerializeField] private bool reuseObjects = false;
-        [SerializeField] private bool isPersistent = false;
 
         public GameObject Prefab { get => prefab; set => prefab = value; }
         public bool ReuseObjects { get => reuseObjects; set => reuseObjects = value; }
         public int InitSize { get => initSize; set => initSize = value; }
         public int MaxSize { get => maxSize; set => maxSize = value; }
 
-        private readonly Queue<RefItem> availableQueue = new();
-        private readonly LinkedList<RefItem> usedList = new();
+        private readonly Queue<RefItem> availibleItems = new();
+        private readonly LinkedList<RefItem> usedItems = new();
         private bool isInitialized;
 
-        public int AvalibleCount => availableQueue.Count;
-        public int UsedCount => usedList.Count;
-        public int CurrentSize => AvalibleCount + UsedCount;
+        public int Count => availibleItems.Count + usedItems.Count;
+        public int UsedCount => usedItems.Count;
+        public int AvailibleCount => availibleItems.Count;
 
         private void Start() => Initialize();
 
@@ -32,81 +31,60 @@ namespace BP.RefPool
             initSize = Mathf.Clamp(initSize, 0, maxSize);
         }
 
-        public void ApplyResource(PoolAsset asset)
-        {
-            prefab = asset.Prefab;
-            initSize = asset.InitSize;
-            maxSize = asset.MaxSize;
-            reuseObjects = asset.ReuseObjects;
-            isPersistent = asset.IsPersistent;
-        }
-
         public override void Initialize()
         {
             if (isInitialized) return;
-
-            if (isPersistent)
-                DontDestroyOnLoad(gameObject);
+            if (prefab == null) return;
 
             initSize = Mathf.Clamp(initSize, 0, maxSize);
             for (int i = 0; i < initSize; i++)
             {
                 var item = RefUtils.CreatePooledItem(this);
-                availableQueue.Enqueue(item);
+                item.SetActive(false);
+                availibleItems.Enqueue(item);
             }
             isInitialized = true;
         }
 
         public override RefItem Get()
         {
-            RefItem refItem;
-            if (availableQueue.Count > 0)
-            {
-                refItem = availableQueue.Dequeue();
-            }
-            else if (CurrentSize < maxSize)
-            {
-                refItem = RefUtils.CreatePooledItem(this);
-            }
-            else if (reuseObjects && usedList.Count > 0)
-            {
-                refItem = usedList.Last.Value;
-                usedList.RemoveLast();
-            }
-            else
-            {
-                return null;
-            }
-
-            refItem.ResetState();
-            refItem.SetActive(true);
-            refItem.isUsed = true;
-            usedList.AddFirst(refItem);
+            RefItem refItem = GetAvailibleItem();
+            if (refItem == null) return null;
+            usedItems.AddFirst(refItem);
+            refItem.Use();
             return refItem;
         }
 
-        public override bool Release(RefItem refItem)
+        private RefItem GetAvailibleItem()
         {
-            if (!refItem.isUsed) return false;
-            if (refItem.OwnerPool.Equals(this))
+            if (availibleItems.Count > 0)
             {
-                refItem.SetActive(false);
-                refItem.isUsed = false;
-
-                usedList.Remove(refItem);
-                availableQueue.Enqueue(refItem);
-                return true;
+                return availibleItems.Dequeue();
             }
-            return false;
+
+            if (Count < MaxSize)
+            {
+                var newItem = RefUtils.CreatePooledItem(this);
+                return newItem;
+            }
+
+            if (reuseObjects)
+            {
+                var lastNode = usedItems.Last;
+                usedItems.RemoveLast();
+                return lastNode.Value;
+            }
+
+            return null;
         }
-
-        public override void MakePersistent()
+        public bool Release(RefItem item)
         {
-            if (!isPersistent)
-            {
-                isPersistent = true;
-                DontDestroyOnLoad(gameObject);
-            }
+            if (item == null) return false;
+            if (!item.IsUsed) return false;
+            if (!item.Releasable.Equals(this)) return false;
+            usedItems.Remove(item);
+            availibleItems.Enqueue(item);
+            return true;
         }
     }
 }

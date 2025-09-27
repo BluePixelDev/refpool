@@ -23,7 +23,7 @@ namespace BP.RefPool.Editor
             {
                 GameObject child = new($"Pool #{i + 1}", typeof(RefPooler));
                 child.transform.SetParent(root.transform);
-                rootGroup.AddPool(child.GetComponent<RefPooler>());
+                rootGroup.Add(child.GetComponent<RefPooler>());
             }
             EditorCreeate(menuCommand, root);
         }

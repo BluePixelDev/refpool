@@ -4,7 +4,6 @@
     <ui:IntegerField label="Max Size" value="0" binding-path="maxSize" />
     <ui:SliderInt label="Init Size" value="42" high-value="10" fill="false" show-input-field="true" binding-path="initSize" name="init-size" />
     <ui:Toggle label="Reuse Objects" binding-path="reuseObjects" />
-    <ui:Toggle label="Persistent" binding-path="isPersistent" />
     <ui:VisualElement name="runtime-stats" style="flex-grow: 1;">
         <ui:GroupBox>
             <ui:Label text="Runtime Stats" style="-unity-font-style: bold;" />

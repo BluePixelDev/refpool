@@ -62,7 +62,7 @@ namespace BP.RefPool
         }
         private void Spawner_SpawnedObject(RefItem item)
         {
-            item.transform.SetLocalPositionAndRotation(GetSpawnPosition(), GetSpawnRotation());
+            item.transform.SetPositionAndRotation(GetSpawnPosition(), GetSpawnRotation());
         }
 
         private Vector3 GetSpawnPosition()

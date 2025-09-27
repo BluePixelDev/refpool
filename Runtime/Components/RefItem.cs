@@ -10,29 +10,36 @@ namespace BP.RefPool
     [AddComponentMenu("RefPool/Ref Item")]
     public class RefItem : MonoBehaviour
     {
-        [SerializeField] private UnityEvent onReset;
-        public event Action Reset;
+        [SerializeField] private UnityEvent onUse;
+        public event Action Used;
 
-        private IPool ownerPool;
-        internal IPool OwnerPool => ownerPool;
+        private IReleasable releasable;
+        internal IReleasable Releasable => releasable;
 
-        internal bool isUsed;
+        private bool isUsed;
+        public bool IsUsed => isUsed;
 
-        internal void SetOwner(IPool ownerPool)
+        internal void SetOwner(IReleasable owner)
         {
-            this.ownerPool = ownerPool;
+            releasable = owner;
         }
 
-        public void ResetState()
+        internal void Use()
         {
-            onReset?.Invoke();
-            Reset?.Invoke();
+            isUsed = true;
+            onUse?.Invoke();
+            Used?.Invoke();
+            SetActive(true);
         }
 
-        public void SetActive(bool active)
+        public void Release()
         {
-            if (gameObject.activeSelf != active)
-                gameObject.SetActive(active);
+            if (!isUsed) return;
+            releasable.Release(this);
+            isUsed = false;
+            SetActive(false);
         }
+
+        internal void SetActive(bool active) => gameObject.SetActive(active);
     }
 }

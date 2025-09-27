@@ -60,16 +60,17 @@ namespace BP.RefPool.Editor
         {
             if (!Application.isPlaying) return;
 
-            int usedCount = refPooler.UsedCount;
-            int currentSize = refPooler.CurrentSize;
-            int maxSize = refPooler.MaxSize;
+            runtimeStats.MarkDirtyRepaint();
 
-            usageProgressBar.value = usedCount / (float)currentSize;
-            usageProgressBar.title = $"{usedCount}/{currentSize}";
+            int currentCount = refPooler.Count;
+            int useCount = refPooler.UsedCount;
+            int maxCount = refPooler.MaxSize;
 
-            // Capacity
-            capacityProgressBar.value = currentSize / (float)maxSize;
-            capacityProgressBar.title = $"{currentSize}/{maxSize}";
+            capacityProgressBar.value = currentCount / (float)maxCount;
+            capacityProgressBar.title = $"Capacity: {currentCount}/{maxCount}";
+
+            usageProgressBar.value = useCount / (float)currentCount;
+            usageProgressBar.title = $"Usage: {useCount} / {currentCount}";
         }
 
         private void UpdateStatsVisibility(bool show)

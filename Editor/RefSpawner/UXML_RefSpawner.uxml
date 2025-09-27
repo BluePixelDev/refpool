@@ -1,0 +1,10 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <uie:PropertyField binding-path="refResource" label="Ref Resource" usage-hints="DynamicTransform" />
+    <ui:Toggle label="Init On Awake" binding-path="initOnAwake" />
+    <ui:Toggle label="Auto Spawn" binding-path="autoSpawn" />
+    <ui:VisualElement name="spawn-options" style="flex-grow: 1;">
+        <ui:Label text="Spawning" style="-unity-font-style: bold; margin-top: 12px;" />
+        <ui:FloatField label="Spawn Interval" value="42.2" binding-path="spawnInterval" />
+        <ui:IntegerField label="Spawn Count" value="42" binding-path="spawnCount" />
+    </ui:VisualElement>
+</ui:UXML>

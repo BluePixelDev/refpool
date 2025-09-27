@@ -1,7 +1,6 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
     <ui:TextField label="Display Name" binding-path="displayName" />
-    <ui:EnumField label="Pick Mode" value="Random" type="BP.RefPool.PoolPickMode, BP.RefPool" />
-    <ui:Toggle label="Persistent" binding-path="isPersistent" />
+    <ui:EnumField label="Pick Mode" value="Random" type="BP.RefPool.PoolPickMode, BP.RefPool" binding-path="pickMode" />
     <ui:Label text="Pools" style="margin-top: 10px; font-size: 16px; -unity-font-style: bold; -unity-text-align: upper-center;" />
-    <ui:ListView binding-path="pools" reorderable="true" show-bound-collection-size="false" show-add-remove-footer="true" reorder-mode="Animated" show-border="true" />
+    <ui:ListView binding-path="pools" reorderable="true" show-bound-collection-size="false" show-add-remove-footer="true" reorder-mode="Animated" show-border="true" virtualization-method="DynamicHeight" />
 </ui:UXML>

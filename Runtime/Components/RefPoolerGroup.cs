@@ -3,11 +3,12 @@ using UnityEngine;
 
 namespace BP.RefPool
 {
-    public class RefPoolerGroup : RefComponent, IResourceApplier<PoolGroupAsset>
+    public class RefPoolerGroup : RefComponent
     {
         [SerializeField] private PoolPickMode pickMode = PoolPickMode.Random;
-        [SerializeField] private bool isPersistent;
         [SerializeField] private List<RefComponent> pools = new();
+
+        public PoolPickMode PickMode { get => pickMode; set => pickMode = value; }
 
         private int seqIndex;
         private int backIndex;
@@ -16,70 +17,18 @@ namespace BP.RefPool
 
         private void OnValidate()
         {
-            HashSet<RefComponent> uniquePools = new();
-
             for (int i = pools.Count - 1; i >= 0; i--)
             {
                 var poolComp = pools[i];
                 if (poolComp == null)
+                    continue;
+
+                if (poolComp == this)
                 {
                     pools.RemoveAt(i);
                     continue;
                 }
-
-                if (uniquePools.Contains(poolComp))
-                {
-                    pools.RemoveAt(i);
-                    continue;
-                }
-
-                if (poolComp is RefPoolerGroup poolGroup && poolGroup.ContainsPool(this))
-                {
-                    Debug.LogError($"Removed {poolComp.name} from {name}: cyclic reference detected.");
-                    pools.RemoveAt(i);
-                    continue;
-                }
-
-                uniquePools.Add(poolComp);
             }
-        }
-
-        public void ApplyResource(PoolGroupAsset asset)
-        {
-            pickMode = asset.PickMode;
-            isPersistent = asset.IsPersistent;
-        }
-
-        public void AddPool(RefComponent pool)
-        {
-            if (pools.Contains(pool)) return;
-
-            if (pool is RefPoolerGroup poolGroup && poolGroup.ContainsPool(this))
-            {
-                Debug.LogError($"Cannot add {pool.name} to {name}: it would create a cyclic reference.");
-                return;
-            }
-
-            if (isPersistent) pool.MakePersistent();
-            pools.Add(pool);
-        }
-        public bool RemovePool(RefComponent pool)
-        {
-            return pools.Remove(pool);
-        }
-        public bool ContainsPool(RefComponent targetPool)
-        {
-            if (pools.Contains(targetPool)) return true;
-
-            foreach (var pool in pools)
-            {
-                if (pool is RefPoolerGroup group && group.ContainsPool(targetPool))
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         public override void Initialize()
@@ -92,56 +41,48 @@ namespace BP.RefPool
             }
             isInitialized = true;
         }
+
+        public void Add(RefComponent pool)
+        {
+            if (pools.Contains(pool)) return;
+            pools.Add(pool);
+        }
+        public bool Remove(RefComponent pool) => pools.Remove(pool);
+        public bool Contains(RefComponent targetPool) => pools.Contains(targetPool);
         public override RefItem Get()
         {
-            return pickMode switch
+            if (pools.Count == 0)
             {
-                PoolPickMode.Random => GetRandom(),
-                PoolPickMode.Sequential => GetSequential(),
-                PoolPickMode.Back2Back => GetBack2Back(),
-                _ => GetRandom()
-            };
-        }
-        public override bool Release(RefItem item)
-        {
-            foreach (var pool in pools)
-            {
-                if (pool.Release(item))
-                {
-                    return true;
-                }
+                Debug.LogWarning($"[RefPoolerGroup] No pools available in '{name}' to get from.");
+                return null;
             }
 
-            return false;
-        }
+            RefComponent selectedPool = null;
+            switch (pickMode)
+            {
+                case PoolPickMode.Random:
+                    int randomIndex = Random.Range(0, pools.Count);
+                    selectedPool = pools[randomIndex];
+                    break;
 
-        private RefItem GetRandom()
-        {
-            var randInt = Random.Range(0, pools.Count);
-            return pools[randInt].Get();
-        }
-        private RefItem GetSequential()
-        {
-            var pool = pools[seqIndex];
-            seqIndex = (seqIndex + 1) % pools.Count;
-            return pool.Get();
-        }
-        private RefItem GetBack2Back()
-        {
-            var pool = pools[backIndex];
-            backIndex += backDir;
-            if (backIndex >= pools.Count || backIndex < 0)
-            {
-                backDir = -backDir;
+                case PoolPickMode.Sequential:
+                    selectedPool = pools[seqIndex];
+                    seqIndex = (seqIndex + 1) % pools.Count;
+                    break;
+
+                case PoolPickMode.Back2Back:
+                    selectedPool = pools[backIndex];
+                    backIndex += backDir;
+
+                    if (backIndex >= pools.Count || backIndex < 0)
+                    {
+                        backDir = -backDir;
+                        backIndex += backDir * 2;
+                        backIndex = Mathf.Clamp(backIndex, 0, pools.Count - 1);
+                    }
+                    break;
             }
-            return pool.Get();
-        }
-        public override void MakePersistent()
-        {
-            foreach (var pool in pools)
-            {
-                pool.MakePersistent();
-            }
+            return selectedPool.Get();
         }
     }
 }

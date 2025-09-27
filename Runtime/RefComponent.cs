@@ -6,5 +6,7 @@ namespace BP.RefPool
     {
         public abstract void Prepare();
         public abstract RefItem Get();
+
+        public abstract bool HasDependencyOn(RefComponent refComponent);
     }
 }

@@ -37,7 +37,7 @@ namespace BP.RefPool
                     continue;
                 }
 
-                if (poolRes.IsContainedIn(this))
+                if (poolRes.HasDependencyOn(this))
                 {
                     pools.RemoveAt(i);
                     Debug.LogWarning("[PoolGroupAsset] Cyclic dependency detected, removing!");
@@ -82,12 +82,12 @@ namespace BP.RefPool
             return groupComponent;
         }
 
-        public override bool IsContainedIn(RefResource resource)
+        public override bool HasDependencyOn(RefResource resource)
         {
             foreach (var poolAsset in pools)
             {
                 if (poolAsset == resource) return true;
-                if (poolAsset.IsContainedIn(resource))
+                if (poolAsset.HasDependencyOn(resource))
                 {
                     return true;
                 }

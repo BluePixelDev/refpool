@@ -45,6 +45,6 @@ namespace BP.RefPool
             pooler.ReuseObjects = reuseObjects;
         }
 
-        public override bool IsContainedIn(RefResource resource) => resource == this;
+        public override bool HasDependencyOn(RefResource resource) => resource == this;
     }
 }

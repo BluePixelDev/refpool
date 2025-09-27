@@ -87,5 +87,7 @@ namespace BP.RefPool
             availibleItems.Enqueue(item);
             return true;
         }
+
+        public override bool HasDependencyOn(RefComponent refComponent) => refComponent == this;
     }
 }

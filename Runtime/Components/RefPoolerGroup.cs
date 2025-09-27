@@ -28,6 +28,13 @@ namespace BP.RefPool
                     pools.RemoveAt(i);
                     continue;
                 }
+
+                if (poolComp.HasDependencyOn(this))
+                {
+                    pools.RemoveAt(i);
+                    Debug.LogWarning("[RefPoolerGroup] Detected cyclic dependency: Removing item");
+                    continue;
+                }
             }
         }
 
@@ -83,6 +90,16 @@ namespace BP.RefPool
                     break;
             }
             return selectedPool.Get();
+        }
+
+        public override bool HasDependencyOn(RefComponent refComponent)
+        {
+            foreach (var pool in pools)
+            {
+                if (pool == refComponent) return true;
+                return pool.HasDependencyOn(refComponent);
+            }
+            return false;
         }
     }
 }

@@ -36,6 +36,13 @@ namespace BP.RefPool
                     Debug.LogWarning("[PoolGroupAsset] Cannot assign itself as pool entry");
                     continue;
                 }
+
+                if (poolRes.IsContainedIn(this))
+                {
+                    pools.RemoveAt(i);
+                    Debug.LogWarning("[PoolGroupAsset] Cyclic dependency detected, removing!");
+                    continue;
+                }
             }
         }
 
@@ -73,6 +80,19 @@ namespace BP.RefPool
 #endif
             }
             return groupComponent;
+        }
+
+        public override bool IsContainedIn(RefResource resource)
+        {
+            foreach (var poolAsset in pools)
+            {
+                if (poolAsset == resource) return true;
+                if (poolAsset.IsContainedIn(resource))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

@@ -44,5 +44,7 @@ namespace BP.RefPool
             pooler.MaxSize = maxSize;
             pooler.ReuseObjects = reuseObjects;
         }
+
+        public override bool IsContainedIn(RefResource resource) => resource == this;
     }
 }

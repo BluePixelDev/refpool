@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2aac9e0dfb3f1b4e86db03643df2a46, type: 3}
+  m_Name: BasicGroup
+  m_EditorClassIdentifier: BP.RefPool::BP.RefPool.PoolGroupAsset
+  displayName: Basic Group
+  pickMode: 1
+  pools:
+  - {fileID: 11400000, guid: 613218d6a2b942d43b59407643aedd80, type: 2}
+  - {fileID: 11400000, guid: 9f19a54cdc0d4ee4c9430af1a22dae91, type: 2}

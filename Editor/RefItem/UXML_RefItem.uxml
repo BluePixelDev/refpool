@@ -2,5 +2,5 @@
     <ui:GroupBox>
         <ui:Label text="&lt;b&gt;RefItem&lt;/b&gt; acts as handle for pooled items.&lt;br&gt;&lt;b&gt;&lt;i&gt;&lt;color=red&gt;Removal during runtime can result in unexpected behaviour." style="white-space: normal; -unity-text-align: upper-center;" />
     </ui:GroupBox>
-    <uie:PropertyField binding-path="onReset" label="On Reset" />
+    <uie:PropertyField binding-path="onUse" label="OnUse" />
 </ui:UXML>

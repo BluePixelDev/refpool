@@ -1,5 +1,4 @@
 using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -15,16 +14,14 @@ namespace BP.RefPool.Editor
             var root = new VisualElement();
             treeAsset.CloneTree(root);
 
-            var spawnOptions = root.Q<VisualElement>("spawn-options");
+            var spawnOptionsElm = root.Q<VisualElement>("spawn-options");
+            var helpBoxElm = root.Q<HelpBox>("help-box");
+
             var autoSpawnProp = serializedObject.FindProperty("autoSpawn");
+            var refResourceProp = serializedObject.FindProperty("refResource");
 
-            UpdateSpawnSettingsVisibility();
-            spawnOptions.TrackPropertyValue(autoSpawnProp, (prop) => UpdateSpawnSettingsVisibility());
-
-            void UpdateSpawnSettingsVisibility()
-            {
-                spawnOptions.style.display = autoSpawnProp.boolValue ? DisplayStyle.Flex : DisplayStyle.None;
-            }
+            spawnOptionsElm.TrackVisibilityBasedOnProperty(autoSpawnProp, (prop) => prop.boolValue);
+            helpBoxElm.TrackVisibilityBasedOnProperty(refResourceProp, (prop) => prop.boxedValue == null);
 
             return root;
         }

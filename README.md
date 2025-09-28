@@ -1,98 +1,118 @@
 # RefPool
+
 [![GitHub Repo stars](https://img.shields.io/github/stars/BluePixelDev/refpool?style=flat-square)](https://github.com/BluePixelDev/refpool/stargazers)
 [![GitHub last commit](https://img.shields.io/github/last-commit/BluePixelDev/refpool?style=flat-square)](https://github.com/BluePixelDev/refpool/commits/main)
 [![GitHub issues](https://img.shields.io/github/issues/bluepixeldev/refpool?style=flat-square)](https://github.com/bluepixeldev/refpool/issues)
 [![Unity Version](https://img.shields.io/badge/unity-6.0%2B-green?style=flat-square)](https://unity.com/releases/editor)
 
-**RefPool** is a lightweight, ScriptableObject-driven pooling system for Unity 6.0 and above.  
-It enables clean, efficient reuse of GameObjects across scenes without relying on global registries.
+**RefPool** is a lightweight, high-performance pooling system for **Unity 6** and above, designed to efficiently manage GameObjects through ScriptableObjects.
 
 ## Features
-- ScriptableObject-based pool references for cross-scene linking
-- Lazy pool initialization and automatic cleanup on unload
-- Efficient memory management through shared pooling
-- Supports runtime spawning with configurable options such as spawn rate, position overrides, and randomization
-- Clean integration with Unity’s component model
-- Extendable through custom `PoolResource` implementations for advanced pooling behaviors
+
+- Efficient GameObject pooling
+- Works seamlessly with Unity 6 and above
+- Uses ScriptableObjects for easy configuration and management
+- Supports nested pooling through Groups for hierarchical pooling
+
+## Table of Contents
+
+- [RefPool](#refpool)
+  - [Features](#features)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+    - [1. Open Unity Package Manager](#1-open-unity-package-manager)
+    - [2. Add Package](#2-add-package)
+  - [Usage](#usage)
+    - [Creating Pools](#creating-pools)
+    - [Pools vs Groups](#pools-vs-groups)
+    - [Adding Components](#adding-components)
+    - [Example Usage](#example-usage)
+  - [Contributing](#contributing)
+    - [How to Contribute:](#how-to-contribute)
+  - [License](#license)
 
 ## Installation
 
-### Unity Package Manager (via Git URL)
+### 1. Open Unity Package Manager
 
-1. Open your Unity project
-2. Go to `Packages/manifest.json`
-3. Add the following line to the `dependencies` block:
+In Unity, go to the **Toolbar** -> **Window** -> **Package Management** -> **Package Manager**
 
-```json
-"com.bluepixeldev.refpool": "https://github.com/bluepixeldev/refpool.git"
-```
+### 2. Add Package
 
-### Manual Import
-
-Clone or download this repository and move the `RefPool` folder into your project's `Assets` directory.
+1. In the Package Manager window, click the + button at the top left.
+2. Select **Install package from git URL...**
+3. Paste the following URL: `https://github.com/BluePixelDev/refpool.git`
 
 ## Usage
 
-### Create a Pool Resource
+### Creating Pools
 
-1. Right-click in the `Project` window
-2. Select `Create > RefPool > Pool or Pool Group`
-3. Assign the prefab and configure pool size, increment size, and other settings
+To create a **Referenced Pool** in your project:
 
-### Add a RefPoolSpawner
+1. Go to the **Project** window and select a directory where you want to create the pool.
+2. Right-click in the directory and select: **Create** -> **RefPool** -> **Pool**
+3. Configure the pool using the Inspector. The Pool Asset is the primary endpoint for retrieving and releasing GameObjects.
 
-1. Attach the `RefPoolSpawner` component to a GameObject
-2. Assign the `PoolResource` you created
-3. Configure spawn behavior as needed
+### Pools vs Groups
 
-### Trigger Spawning
+Pools are used to manage individual collections of GameObjects. Each pool holds and manages a specific type of object.
 
-You can trigger pooled object spawning manually or automatically:
+**Groups** allow you to organize pools into hierarchical structures. You can nest multiple pools inside a group, enabling more granular control over different object types.
 
-```csharp
-[SerializeField] private PoolSpawner spawner;
+For example, you can create a pool for Debris and then use groups to separate Small Debris and Large Debris into separate pools.
 
-void SomeEventTrigger()
+### Adding Components
+
+**RefPool** also includes components that can be added to **GameObjects** for pooling functionality.
+
+- RefPooler
+- RefGroupPooler
+
+- RefSpawner (Used to spawn pooled objects)
+- RefPlacer (Used alongside `RefSpawner` to place objects.)
+
+### Example Usage
+
+```cs
+using BP.RefPool;
+public class Example : MonoBehaviour
 {
-    spawner.Spawn();
-}
-```
+    public RefResource resource; // Base class for both PoolAsset and PoolGroupAsset
 
-### Extending with Custom Pool Behaviors
+    public void Start() {
+        // Optionally, prepare the pool before using it
+        // resource.Prepare();
 
-RefPool allows you to implement custom pooling logic by extending the `PoolResource` class. This enables advanced use cases such as dynamic pool resizing, custom initialization, or specialized cleanup logic.
+        // Retrieve a pooled item (RefItem is a MonoBehaviour)
+        RefItem pooledItem = resource.Get()
 
-Here’s an example of a custom `PoolResource`:
+        // Manipulate the pooled item (e.g., set position, etc.)
+        pooledItem.transform.position = Vector3.zero;
 
-```csharp
-using UnityEngine;
-
-namespace BP.RefPool
-{
-    public class CustomPoolResource : PoolResource
-    {
-        public override void Initialize()
-        {
-            // Custom initialization logic
-        }
-
-        public override GameObject Get()
-        {
-            // Custom logic for retrieving a GameObject from the pool
-            return null;
-        }
-
-        public override bool Release(GameObject gameObject)
-        {
-            // Custom logic for releasing a GameObject back to the pool
-            return true;
-        }
+        // Once done, release the item back to the pool for reuse
+        pooledItem.Release()
     }
 }
 ```
-
-This flexibility allows you to tailor the pooling system to your specific project requirements.
+In this example:
+- ``RefResource`` is a base class used for both PoolAssets and PoolGroupAssets.
+- ``Get()`` retrieves a pooled item, which is a RefItem (a MonoBehaviour for managing the pooled objects).
+- ``Release()`` returns the object to the pool when no longer needed.
 
 ## Contributing
 
-Pull requests and issues are welcome. If you encounter a bug or have a feature suggestion, please open an issue on GitHub.
+Contributions are welcome! If you find a bug or have a feature request, feel free to create an issue or submit a pull request.
+
+### How to Contribute:
+
+1. Fork the repository.
+2. Create a feature branch (`git checkout -b feature-branch`).
+3. Commit your changes (`git commit -am 'Add new feature'`).
+4. Push to the branch (`git push origin feature-branch`).
+5. Create a new pull request.
+
+I’ll review your changes and merge them after approval.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/BluePixelDev/refpool/blob/master/LICENSE)

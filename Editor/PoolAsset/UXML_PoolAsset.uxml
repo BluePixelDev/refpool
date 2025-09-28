@@ -1,8 +1,9 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
     <ui:TextField label="Display Name" binding-path="displayName" />
     <uie:ObjectField label="Prefab" type="UnityEngine.GameObject, UnityEngine.CoreModule" binding-path="prefab" />
-    <ui:Toggle label="Reuse Objects" data-source-path="reuseObjects" />
+    <ui:Toggle label="Reuse Objects" data-source-path="reuseObjects" binding-path="reuseObjects" />
     <ui:Label text="Size" style="-unity-text-align: upper-center; -unity-font-style: bold; font-size: 16px; margin-top: 10px;" />
     <ui:IntegerField label="Init Size" value="0" binding-path="initSize" />
     <ui:IntegerField label="Max Size" value="0" binding-path="maxSize" />
+    <ui:HelpBox text="Prefab is not assigned" message-type="Warning" name="help-box" />
 </ui:UXML>

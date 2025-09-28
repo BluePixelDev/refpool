@@ -1,5 +1,4 @@
 using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -25,18 +24,21 @@ namespace BP.RefPool.Editor
             treeAsset.CloneTree(root);
 
             var initSizeSlider = root.Q<SliderInt>("init-size");
-            var maxSizeProp = serializedObject.FindProperty("maxSize");
-            var initSizeProp = serializedObject.FindProperty("initSize");
-
-            initSizeSlider.highValue = maxSizeProp.intValue;
-            initSizeSlider.TrackPropertyValue(maxSizeProp, (prop) =>
-            {
-                initSizeSlider.highValue = maxSizeProp.intValue;
-            });
-
+            var helpBox = root.Q<HelpBox>("help-box");
             runtimeStats = root.Q("runtime-stats");
             usageProgressBar = runtimeStats.Q<ProgressBar>("usage-progress");
             capacityProgressBar = runtimeStats.Q<ProgressBar>("capacity-progress");
+
+            var maxSizeProp = serializedObject.FindProperty("maxSize");
+            var initSizeProp = serializedObject.FindProperty("initSize");
+            var prefabProp = serializedObject.FindProperty("prefab");
+
+            initSizeSlider.PropertyAction(initSizeProp, (prop) =>
+            {
+                initSizeSlider.highValue = prop.intValue;
+            });
+
+            helpBox.TrackVisibilityBasedOnProperty(prefabProp, (prop) => prop.boxedValue == null);
 
             UpdateStatsVisibility(Application.isPlaying);
             EditorApplication.playModeStateChanged -= PlayModeChanged;

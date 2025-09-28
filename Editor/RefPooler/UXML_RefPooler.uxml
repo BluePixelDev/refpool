@@ -4,7 +4,7 @@
     <ui:IntegerField label="Max Size" value="0" binding-path="maxSize" />
     <ui:SliderInt label="Init Size" value="42" high-value="10" fill="false" show-input-field="true" binding-path="initSize" name="init-size" />
     <ui:Toggle label="Reuse Objects" binding-path="reuseObjects" />
-    <ui:VisualElement name="runtime-stats" style="flex-grow: 1;">
+    <ui:VisualElement name="runtime-stats" style="flex-grow: 0;">
         <ui:GroupBox>
             <ui:Label text="Runtime Stats" style="-unity-font-style: bold;" />
             <ui:VisualElement style="flex-grow: 0; flex-direction: row;">
@@ -17,4 +17,5 @@
             </ui:VisualElement>
         </ui:GroupBox>
     </ui:VisualElement>
+    <ui:HelpBox message-type="Warning" text="Prefab is not assigned" name="help-box" />
 </ui:UXML>

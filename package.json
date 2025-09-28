@@ -2,7 +2,7 @@
     "name": "com.bluepixel.refpool",
     "version": "1.0.0",
     "displayName": "RefPool",
-    "description": "A lightweight pooling system using ScriptableObjects as inter-scene references for clean, shared object pooling and automatic lifecycle management.",
+    "description": "RefPool is a lightweight, high-performance pooling system for Unity, designed to efficiently manage GameObjects through ScriptableObjects.",
     "unity": "6000.0",
     "author": {
         "name": "Bluepixel",

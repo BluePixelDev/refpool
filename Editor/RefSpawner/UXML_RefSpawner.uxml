@@ -2,9 +2,10 @@
     <uie:PropertyField binding-path="refResource" label="Ref Resource" usage-hints="DynamicTransform" />
     <ui:Toggle label="Init On Awake" binding-path="initOnAwake" />
     <ui:Toggle label="Auto Spawn" binding-path="autoSpawn" />
-    <ui:VisualElement name="spawn-options" style="flex-grow: 1;">
+    <ui:VisualElement name="spawn-options" style="flex-grow: 0;">
         <ui:Label text="Spawning" style="-unity-font-style: bold; margin-top: 12px;" />
         <ui:FloatField label="Spawn Interval" value="42.2" binding-path="spawnInterval" />
         <ui:IntegerField label="Spawn Count" value="42" binding-path="spawnCount" />
     </ui:VisualElement>
+    <ui:HelpBox message-type="Warning" text="Ref Resource is not asssigned" name="help-box" />
 </ui:UXML>

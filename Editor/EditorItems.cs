@@ -3,15 +3,14 @@ using UnityEngine;
 
 namespace BP.RefPool.Editor
 {
-    public static class EditorUtil
+    internal static class EditorItems
     {
-
         [MenuItem("GameObject/RefPool/Pool", false, 10)]
         public static void CreatePool(MenuCommand menuCommand)
         {
             GameObject go = new("Pool");
             go.AddComponent<RefPooler>();
-            EditorCreeate(menuCommand, go);
+            EditorCreate(menuCommand, go);
         }
 
         [MenuItem("GameObject/RefPool/Group", false, 10)]
@@ -25,7 +24,7 @@ namespace BP.RefPool.Editor
                 child.transform.SetParent(root.transform);
                 rootGroup.Add(child.GetComponent<RefPooler>());
             }
-            EditorCreeate(menuCommand, root);
+            EditorCreate(menuCommand, root);
         }
 
 
@@ -33,10 +32,10 @@ namespace BP.RefPool.Editor
         public static void CreateSpawner(MenuCommand menuCommand)
         {
             GameObject root = new("Spawner", typeof(RefSpawner));
-            EditorCreeate(menuCommand, root);
+            EditorCreate(menuCommand, root);
         }
 
-        private static void EditorCreeate(MenuCommand menuCommand, params GameObject[] gameobjects)
+        private static void EditorCreate(MenuCommand menuCommand, params GameObject[] gameobjects)
         {
             foreach (var go in gameobjects)
             {

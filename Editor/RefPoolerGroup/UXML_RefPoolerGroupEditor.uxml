@@ -1,5 +1,4 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
     <ui:EnumField label="Pick Mode" value="Random" type="BP.RefPool.PoolPickMode, BP.RefPool" include-obsolete-values="false" binding-path="pickMode" />
-    <ui:Label text="Pools" style="margin-top: 10px; font-size: 16px; -unity-font-style: bold; -unity-text-align: upper-center;" />
     <ui:ListView show-add-remove-footer="true" show-foldout-header="false" reorderable="true" reorder-mode="Animated" show-border="true" allow-add="true" binding-path="pools" show-bound-collection-size="false" binding-source-selection-mode="AutoAssign" virtualization-method="DynamicHeight" />
 </ui:UXML>

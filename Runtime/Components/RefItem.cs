@@ -27,9 +27,9 @@ namespace BP.RefPool
         internal void Use()
         {
             isUsed = true;
+            SetActive(true);
             onUse?.Invoke();
             Used?.Invoke();
-            SetActive(true);
         }
 
         public void Release()

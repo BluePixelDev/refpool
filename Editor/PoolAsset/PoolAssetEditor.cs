@@ -13,6 +13,11 @@ namespace BP.RefPool.Editor
         {
             var root = new VisualElement();
             treeAsset.CloneTree(root);
+
+            var helpBox = root.Q<HelpBox>("help-box");
+            var prefabProp = serializedObject.FindProperty("prefab");
+
+            helpBox.TrackVisibilityBasedOnProperty(prefabProp, (prop) => prop.boxedValue == null);
             return root;
         }
     }
